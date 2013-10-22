@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 import lejos.nxt.Motor;
+import lejos.nxt.MotorPort;
+import lejos.nxt.NXTMotor;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.util.Delay;
@@ -24,8 +26,12 @@ public class BTReceiver {
 		//DataOutputStream dos = btc.openDataOutputStream();    // if you want to send something to the PC
 
 		int cmd = 0;
+                
+                NXTMotor motora = new NXTMotor(MotorPort.A);
+                NXTMotor motorb = new NXTMotor(MotorPort.B);
+                NXTMotor motorc = new NXTMotor(MotorPort.C);
 
-		while (true)    // ist doof :[
+		while (true)
 		{
 			if( Button.readButtons()>0)
 			{
@@ -59,13 +65,24 @@ public class BTReceiver {
 				LCD.refresh();
 
                 // checks what command the robot received and executes it
-				switch (cmd)
+				if(cmd <= 1100){ //Command for motor A
+                                    motora.setPower(cmd-1000);
+                                    motora.forward();
+                                } else if(cmd <= 2100){ //Command for motor B
+                                    motorb.setPower(cmd-2000);
+                                    motorb.forward();
+                                } else if(cmd <= 3100){ //Command for motor C
+                                    motorc.setPower(cmd-3000);
+                                    motorc.forward();
+                                }
+                                /*
+                                switch (cmd)
 				{
 					case 1:
 						LCD.drawString("-1-", 0,3);
-						Motor.B.setSpeed(75);                                                Motor.B.setSpeed(50);
-                                                Motor.C.setSpeed(75);
+						motorb.setPower(cmd);
                                                 Motor.B.forward();
+                                                Motor.C.setPower(50);
                                                 Motor.C.forward();                                                	
 						break;
 					case 2:
@@ -74,8 +91,8 @@ public class BTReceiver {
                                                 Motor.C.stop();
 						break;
                                         case 3: 
-                                                Motor.B.setSpeed(20);                                                Motor.B.setSpeed(50);
-                                                Motor.C.setSpeed(20);
+                                                Motor.B.setSpeed(360); 
+                                                Motor.C.setSpeed(360);
                                                 Motor.B.backward();
                                                 Motor.C.backward();
                                                 Motor.B.rotate(1000);
@@ -89,6 +106,7 @@ public class BTReceiver {
 						//dos.writeInt(-n);
 						//dos.flush();
 				}
+                                */
 				LCD.refresh();
 			}
 		}

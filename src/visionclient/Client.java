@@ -1,4 +1,4 @@
-package client;
+package visionclient;
 import com.google.protobuf.CodedInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 
 
@@ -15,10 +16,10 @@ public class Client implements Runnable{
        
         private int ServerPort = 10002;
         private InetAddress ServerIP;
-        private float bx = 0;
-        private float by = 0;
-        private float rx = 0;
-        private float ry = 0;
+        private int camera = 0;
+        private ArrayList<Robot> robots = new ArrayList<Robot>();
+        private Ball ball = new Ball();
+        
         
         public Client() {
         }
@@ -46,35 +47,29 @@ public class Client implements Runnable{
                         MessagesVision.SSL_WrapperPacket wrapper =
                                         MessagesVision.SSL_WrapperPacket.parseFrom(is);
                        
-                        //
+                        
                         MessagesRobocupSslDetection.SSL_DetectionFrame detect = wrapper.getDetection();
-                        //System.out.println("Kamera: " + detect.getCameraId());
+                        setCamera(detect.getCameraId());
                         
                         // Roboter Position Detection
                         if(detect.getRobotsBlueList()!=null && !detect.getRobotsBlueList().isEmpty()){
                         	
-                        	for (MessagesRobocupSslDetection.SSL_DetectionRobot robot : detect.getRobotsBlueList()){	                     
-		                       // System.out.println("Roboter "+ robot.getRobotId() + ": ");
-                                        
-                                            setRx(robot.getPixelX());
-                                            setRy(robot.getPixelY());
-                                            robot.getOrientation();
-                                        
-		                        //System.out.println("Position X:" + robot.getPixelX());
-		                        //System.out.println("Position Y:" + robot.getPixelY());
+                        	for (MessagesRobocupSslDetection.SSL_DetectionRobot robot : detect.getRobotsBlueList()){	
+                                      Robot r = new Robot();
+                                      r.setX(robot.getPixelX());
+                                      r.setY(robot.getPixelY());
+                                      r.setOrientation(robot.getOrientation());
+                                      robots.add(r);                                            
                         	}
                         }
                         
                        
                         // Ball Position Detection
                         if(detect.getBallsList()!=null && !detect.getBallsList().isEmpty()){
+                            
 	                        MessagesRobocupSslDetection.SSL_DetectionBall ball = detect.getBalls(0);
-                                
-                                    setBx(ball.getPixelX());
-                                    setBy(ball.getPixelY());
-                                
-	                        //System.out.printf("Ball X: %f\n", ball.getPixelX() );
-	                        //System.out.printf("Ball Y: %f\n\n", ball.getPixelY() );
+                                this.ball.setX(ball.getPixelX());
+                                this.ball.setY(ball.getPixelY());                                    
                         }
                        
                       }
@@ -93,37 +88,22 @@ public class Client implements Runnable{
                
         }
 
-    public float getBx() {
-        return bx;
+    public void setCamera(int camera) {
+        this.camera = camera;
     }
 
-    public void setBx(float bx) {
-        this.bx = bx;
+    public int getCamera() {
+        return this.camera;
+    }
+    
+    public ArrayList<Robot> getRobots(){
+        return this.robots;
+    }
+    
+    public Ball getBall(){
+        return this.ball;
     }
 
-    public float getBy() {
-        return by;
-    }
-
-    public void setBy(float by) {
-        this.by = by;
-    }
-
-    public float getRx() {
-        return rx;
-    }
-
-    public void setRx(float rx) {
-        this.rx = rx;
-    }
-
-    public float getRy() {
-        return ry;
-    }
-
-    public void setRy(float ry) {
-        this.ry = ry;
-    }
         
    
 }
