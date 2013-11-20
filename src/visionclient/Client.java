@@ -40,6 +40,8 @@ public class Client implements Runnable{
                       while (true) {
 
                         socket.receive(indp);
+                        
+                        robots.clear();
 
                         CodedInputStream is = CodedInputStream.newInstance(indp.getData(), indp.getOffset(), indp.getLength());
                                
@@ -53,14 +55,17 @@ public class Client implements Runnable{
                         
                         // Roboter Position Detection
                         if(detect.getRobotsBlueList()!=null && !detect.getRobotsBlueList().isEmpty()){
+                            
+                            ArrayList<Robot> list = new ArrayList<Robot>();
                         	
                         	for (MessagesRobocupSslDetection.SSL_DetectionRobot robot : detect.getRobotsBlueList()){	
                                       Robot r = new Robot();
                                       r.setX(robot.getPixelX());
                                       r.setY(robot.getPixelY());
                                       r.setOrientation(robot.getOrientation());
-                                      robots.add(r);                                            
+                                      list.add(r);                                            
                         	}
+                                robots = list;
                         }
                         
                        
@@ -69,7 +74,7 @@ public class Client implements Runnable{
                             
 	                        MessagesRobocupSslDetection.SSL_DetectionBall ball = detect.getBalls(0);
                                 this.ball.setX(ball.getPixelX());
-                                this.ball.setY(ball.getPixelY());                                    
+                                this.ball.setY(ball.getPixelY());
                         }
                        
                       }
