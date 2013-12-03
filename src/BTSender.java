@@ -56,7 +56,7 @@ public class BTSender
     
 
     
-    public void sendCmd(int cmd)
+    private void sendCmd(int cmd)
     {
         try {
             dos.writeInt(cmd);
