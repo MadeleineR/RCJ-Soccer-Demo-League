@@ -16,7 +16,7 @@ public class Client implements Runnable{
        
         private int ServerPort = 10002;
         private InetAddress ServerIP;
-        private int camera = 0;
+        private int camera = -1;
         private ArrayList<Robot> robots = new ArrayList<Robot>();
         private Ball ball = new Ball();
         
